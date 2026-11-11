@@ -6,6 +6,9 @@ import sys, glob, os
 import numpy as np, pandas as pd
 from scipy import signal, stats
 from extract_features import sparc, pauses
+import os as _os
+_os.makedirs("results", exist_ok=True)
+_os.makedirs("figures", exist_ok=True)
 
 FS = 14.0
 root = sys.argv[1]

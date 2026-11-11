@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import oh2026_qc_sensitivity as q
 from h1_mixed_models import load, PRIMARY
+import os as _os
+_os.makedirs("results", exist_ok=True)
+_os.makedirs("figures", exist_ok=True)
 
 plt.rcParams.update({"font.family": "serif", "font.serif": ["Times New Roman", "Liberation Serif", "Tinos", "DejaVu Serif"],
                      "font.size": 8, "axes.labelsize": 8, "axes.titlesize": 8, "xtick.labelsize": 7, "ytick.labelsize": 7,

@@ -2,7 +2,10 @@
 import warnings
 import numpy as np, pandas as pd
 import statsmodels.formula.api as smf
-from h1_mixed_models import load, PRIMARY
+from h1_mixed_models import load, PRIMARY, _admissible
+import os as _os
+_os.makedirs("results", exist_ok=True)
+_os.makedirs("figures", exist_ok=True)
 warnings.filterwarnings("ignore")
 
 
@@ -16,7 +19,7 @@ def m2(d, feat, form_extra="lT + drop", ycol=None):
         for meth in ("lbfgs", "bfgs", "powell"):
             try:
                 m = smf.mixedlm(form, d, groups=d.participant, re_formula=re_f).fit(reml=True, method=meth, maxiter=2000)
-                if np.isfinite(m.bse["lo"]) and (best is None or m.llf > best.llf + 1e-6):
+                if _admissible(m) and (best is None or m.llf > best.llf + 1e-6):
                     best = m
             except Exception:
                 pass

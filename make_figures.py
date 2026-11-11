@@ -17,6 +17,9 @@ LAB = {"w_mean": "Mean angular speed", "w_p95": "95th-pct. angular speed", "qlow
        "pause_frac": "Pause-time fraction", "sparc": "SPARC smoothness", "peaks_per_s": "Speed-peak rate"}
 OUT = "figures/"
 import os
+import os as _os
+_os.makedirs("results", exist_ok=True)
+_os.makedirs("figures", exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
 
 

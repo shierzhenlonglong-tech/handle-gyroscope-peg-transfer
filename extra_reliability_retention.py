@@ -6,6 +6,9 @@ import warnings
 import numpy as np, pandas as pd
 from scipy import stats
 from h1_mixed_models import load, PRIMARY
+import os as _os
+_os.makedirs("results", exist_ok=True)
+_os.makedirs("figures", exist_ok=True)
 warnings.filterwarnings("ignore")
 df = load()
 df["logT"] = np.log(df.T_log)

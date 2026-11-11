@@ -6,6 +6,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.metrics import roc_auc_score, brier_score_loss
 from h1_mixed_models import PRIMARY
+import os as _os
+_os.makedirs("results", exist_ok=True)
+_os.makedirs("figures", exist_ok=True)
 warnings.filterwarnings("ignore")
 K = 5
 rng = np.random.default_rng(20261110)

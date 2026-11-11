@@ -3,6 +3,9 @@ import warnings, json
 import numpy as np, pandas as pd
 import statsmodels.formula.api as smf
 from statsmodels.stats.multitest import multipletests
+import os as _os
+_os.makedirs("results", exist_ok=True)
+_os.makedirs("figures", exist_ok=True)
 warnings.filterwarnings("ignore")
 MIN_W_MEAN = 5.0
 PRIMARY = ["w_mean", "w_p95", "qlow_5", "pause_frac", "sparc", "peaks_per_s"]
@@ -21,24 +24,44 @@ def load(path="trial_features.csv"):
     return f
 
 
+def _admissible(m):
+    """A fit is admissible if the optimiser converged, all standard errors are finite and of plausible size for a
+    standardized outcome, and the random-effects covariance is positive definite (not a boundary solution)."""
+    try:
+        if not getattr(m, "converged", True):
+            return False
+        bse = np.asarray(m.bse_fe, float)
+        if not np.all(np.isfinite(bse)) or bse.max() > 5.0:
+            return False
+        cov = np.atleast_2d(np.asarray(m.cov_re, float))
+        return bool(np.linalg.eigvalsh(cov).min() > 1e-8)
+    except Exception:
+        return False
+
+
 def fit(df, feat, with_time, std=True):
     d = df.dropna(subset=[feat]).copy()
     sd = d[feat].std()
     d["y"] = (d[feat] - d[feat].mean()) / sd if std else d[feat]
     form = "y ~ lo + first_in_session" + (" + lT + drop" if with_time else "")
     last = None
-    for re_f in ("~lo", None):          # random slope first; random intercept only as fallback
+    for re_f in ("~lo", None):          # random slope first; random intercept only if no admissible random-slope fit exists
         best = None
-        for meth in ("lbfgs", "bfgs", "powell", "cg", "nm"):   # keep the optimiser with the highest REML likelihood
+        for meth in ("lbfgs", "bfgs", "powell", "cg", "nm"):   # keep the admissible fit with the highest REML likelihood
             try:
                 m = smf.mixedlm(form, d, groups=d.participant, re_formula=re_f).fit(reml=True, method=meth, maxiter=2000)
-                if np.isfinite(m.bse["lo"]) and (best is None or m.llf > best.llf + 1e-6):
-                    best = m
             except Exception as e:
                 last = e
+                continue
+            if not _admissible(m):
+                continue
+            if best is None or m.llf > best.llf + 1e-6:
+                best = m
         if best is not None:
             m = best
-            slopes = {k: m.params["lo"] + v.get("lo", 0.0) for k, v in m.random_effects.items()} if re_f else None
+            slopes = None
+            if re_f:
+                slopes = {k: m.params["lo"] + v.get("lo", 0.0) for k, v in m.random_effects.items()}
             return m, re_f is not None, slopes, sd, len(d)
     raise RuntimeError(f"{feat}: {last}")
 

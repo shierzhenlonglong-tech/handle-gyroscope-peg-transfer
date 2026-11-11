@@ -29,7 +29,7 @@ All analysis scripts and derived tables sit in the **repository root**. Run the 
 
 ## Scripts from a related study
 
-`mp3_gum.py` and `oh2026_qc_sensitivity.py` belong to a **separate, in-submission study** by the same author on the same public SPD-FLS1 data (measurement uncertainty of an instrumented handle). They are kept in this repository but are **not required to reproduce the results of the present paper**. `extract_features.py` imports quality-control helpers from `oh2026_qc_sensitivity.py`. Both scripts are written to run from this repository root:
+`mp3_gum.py` and `oh2026_qc_sensitivity.py` belong to a **separate study in preparation** by the same author on the same public SPD-FLS1 data (measurement uncertainty of an instrumented handle). They are kept in this repository but are **not required to reproduce the results of the present paper**. `extract_features.py` imports quality-control helpers from `oh2026_qc_sensitivity.py`. Both scripts are written to run from this repository root:
 
 ```bash
 python mp3_gum.py selftest
@@ -81,7 +81,7 @@ python make_figures_v2.py [/path/to/spd-fls1]
 
 Random seeds used in the scripts are fixed (for example `20261110` in `h2_prognostic.py`).
 
-A versioned snapshot of this repository should also be archived on Zenodo so that the manuscript can cite a DOI; see `ZENODO_GITHUB_ARCHIVE.md`.
+Versioned snapshots of this repository are archived on Zenodo. All versions: [https://doi.org/10.5281/zenodo.24123988](https://doi.org/10.5281/zenodo.24123988) (always resolves to the latest release). Please cite the specific version used; see `ZENODO_GITHUB_ARCHIVE.md`.
 
 ## Citation
 
@@ -90,3 +90,8 @@ Wang, L. *Beyond completion time: responsiveness, reliability and external consi
 Please also cite the source datasets above.
 
 This code is released under the MIT License (see `LICENSE` in the GitHub repository).
+
+## Changelog
+
+- **v1.0.1** (11 November 2026). `h1_mixed_models.py`, `h1_robustness.py`: a mixed-model fit is now retained only if it is admissible (optimiser converged, finite standard errors, positive-definite random-effects covariance); previously the fit with the highest restricted likelihood was taken without this check, which could select a degenerate boundary solution for some secondary metrics and crash when random effects were predicted. All primary and robustness estimates are unchanged; three rows of the secondary-metric table change in the second decimal. All analysis and figure scripts now create `results/` and `figures/` if they do not exist.
+- **v1.0.0** (11 November 2026). First archived release.
