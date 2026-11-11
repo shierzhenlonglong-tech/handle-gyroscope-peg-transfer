@@ -8,92 +8,85 @@ The study examines whether angular-velocity features from tool-handle gyroscopes
 
 This repository does **not** contain raw motion recordings, official public-dataset archives, ethics paperwork, or consent forms.
 
-## Repository layout
+## Layout (flat)
 
-| Path | Contents |
+All analysis scripts and derived tables sit in the **repository root**. Run the scripts from this directory (the folder that contains `h1_mixed_models.py` and `trial_features.csv`). Output is written to `results/` and `figures/`, which are created as needed.
+
+| Item | Role |
 | --- | --- |
-| `scripts/` | Analysis scripts (from the working-tree folder `03_scripts/`). |
-| `data/derived/` | Derived and summary tables built from the public source datasets (from `02_数据/`). |
-| `docs/analysis_plan_frozen_20261110.md` | Frozen analysis plan dated 10 November 2026, including recorded deviations. |
+| `extract_features.py`, `build_trial_table.py` | Build trial-level features from a local SPD-FLS1 tree (optional if you use the derived tables below). |
+| `h1_mixed_models.py`, `h1_robustness.py` | Primary mixed models and pre-specified robustness analyses. |
+| `h2_prognostic.py` | Exploratory prognostic models. |
+| `extra_reliability_retention.py` | Post-hoc reliability, between-session change and second-half slopes. |
+| `h3_lask.py` | External-consistency analysis (requires a local LASK extract). |
+| `make_figures_v2.py`, `make_figures.py` | Manuscript figures (v2) and earlier figures used as supplements. |
+| `feasibility_check_20261110.py` | Pre-plan exploratory check (known limitations are in its docstring). |
+| `trial_index.csv`, `trial_features.csv` and `_deg` / `_n0165` / `_n05` variants | Derived trial-level tables used in the models. |
+| `features_part{1,2,3}.csv` and tagged variants | Per-subset extracts concatenated by `build_trial_table.py`. |
+| `analysis_plan_frozen_20261110.md` | Frozen analysis plan (Chinese original, dated 10 November 2026). |
+| `analysis_plan_frozen_20261110_EN.md` | English translation; the Chinese original is authoritative if the two texts differ. |
 | `requirements.txt` | Third-party Python packages inferred from script imports. |
 
-The scripts still use the original relative paths (`02_数据/…`, `../02_数据/`, `../07_results/`, `../04_figures/`). They have not been rewritten. To run them from this repository without editing the code, create a layout that matches those paths (see below).
+## Scripts from a related study
+
+`mp3_gum.py` and `oh2026_qc_sensitivity.py` belong to a **separate, in-submission study** by the same author on the same public SPD-FLS1 data (measurement uncertainty of an instrumented handle). They are kept in this repository but are **not required to reproduce the results of the present paper**. `extract_features.py` imports quality-control helpers from `oh2026_qc_sensitivity.py`. Both scripts are written to run from this repository root:
+
+```bash
+python mp3_gum.py selftest
+python oh2026_qc_sensitivity.py selftest
+```
+
+Those self-tests use synthetic fixtures only. To run the quality-control pipeline on the public dataset:
+
+```bash
+python oh2026_qc_sensitivity.py run --root /path/to/SPD-FLS1 --out ./oh2026_out
+```
 
 ## Requirements
 
 Python 3 with:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-Dependencies: `numpy`, `pandas`, `scipy`, `matplotlib`, `statsmodels`, `scikit-learn`. Standard-library modules only otherwise.
+Dependencies: `numpy`, `pandas`, `scipy`, `matplotlib`, `statsmodels`, `scikit-learn`.
 
 ## Data sources (not included)
 
-Only datasets actually used in the analysis are listed. Download them from the official sites; do not substitute unofficial copies.
+Download these official releases yourself; do not substitute unofficial copies.
 
-1. **SPD-FLS1 v2** (primary cohort; handle IMU and trial logs only).  
-   Oh, Deng & Lau (2026), Virginia Tech Data Repository, DOI [10.7294/29421842](https://doi.org/10.7294/29421842) (CC0).  
-   Needed to rebuild features from raw IMU files with `extract_features.py` and for example traces in `make_figures_v2.py`. The derived tables in `data/derived/` already contain the trial-level features used in the models.
-
-2. **LASK v1.0** (external-consistency cohort; 37 public trials).  
-   Official release: [https://doi.org/10.5281/zenodo.20752651](https://doi.org/10.5281/zenodo.20752651) (CC BY 4.0).  
-   Needed only to rerun `h3_lask.py`. Pass the extracted directory (containing `participants.csv` and kinematics) as the script argument. Official zip archives and `participants.csv` are **not** redistributed here.
+1. **SPD-FLS1 v2** (primary cohort; handle IMU and trial logs only). Oh, Deng & Lau (2026), Virginia Tech Data Repository, DOI [10.7294/29421842](https://doi.org/10.7294/29421842) (CC0). Needed only to rebuild features with `extract_features.py` or example traces in `make_figures_v2.py`.
+2. **LASK v1.0** (external-consistency cohort; 37 public trials). Official release: [https://doi.org/10.5281/zenodo.20752651](https://doi.org/10.5281/zenodo.20752651) (CC BY 4.0). Needed only to rerun `h3_lask.py`. Pass the extracted directory (containing `participants.csv` and kinematics) as the script argument.
 
 Participant codes such as `P01` are the public identifiers published with SPD-FLS1, not real names.
 
-## Derived tables (`data/derived/`)
-
-| File | Role |
-| --- | --- |
-| `trial_index.csv` | One row per trial, with exclusion flags and valid-trial markers. |
-| `trial_features.csv` | One row per hand-trial, merged with the index (baseline features). |
-| `trial_features_deg.csv` | Features recomputed under the alternative deg/s unit reading. |
-| `trial_features_n0165.csv`, `trial_features_n05.csv` | Features after injecting 0.165 °/s or 0.5 °/s per-axis white noise. |
-| `features_part{1,2,3}.csv` and the `_deg`, `_n0165`, `_n05` part files | Per-subset feature extracts that `build_trial_table.py` concatenates. |
-
-No file in this release exceeds 50 MB. Analysis outputs written to `07_results/` and figures written to `04_figures/` can be regenerated and are not included.
-
 ## How to run
 
-From a POSIX shell, in the repository root (Windows users can use junctions or copies with the same names):
+From the repository root:
 
 ```bash
-# Scripts expect these sibling folder names
-ln -s "$(pwd)/data/derived" 02_数据
-mkdir -p 07_results 04_figures/v2
-cd scripts
-```
+mkdir -p results figures
+# Feature extraction (optional if you use the provided derived tables):
+# python extract_features.py /path/to/spd-fls1 features_part1.csv --only part1
+# python build_trial_table.py            # also: _deg, _n0165, _n05
 
-Feature extraction from a local SPD-FLS1 tree (optional if you use the provided derived tables):
-
-```bash
-# Run from the original project root, or create 02_数据 first.
-# python extract_features.py <SPD-FLS1 root, zip or extracted> 02_数据/features_part1.csv --only part1
-python extract_features.py /path/to/spd-fls1 ../02_数据/features_part1.csv --only part1
-python build_trial_table.py            # also: _deg, _n0165, _n05
-```
-
-Primary analyses (working directory = `scripts/`):
-
-```bash
 python h1_mixed_models.py
 python h1_robustness.py
 python h2_prognostic.py
 python extra_reliability_retention.py
 python h3_lask.py /path/to/LASK/extracted
-python make_figures_v2.py [/path/to/spd-fls1]   # figures; optional raw path for example traces
+python make_figures_v2.py [/path/to/spd-fls1]
 ```
-
-`feasibility_check_20261110.py` is a pre-plan exploratory check (known limitations are in its docstring). `oh2026_qc_sensitivity.py` is the quality-control module used by feature extraction. `mp3_gum.py` is a related uncertainty toolkit (`python mp3_gum.py selftest` uses synthetic data only).
 
 Random seeds used in the scripts are fixed (for example `20261110` in `h2_prognostic.py`).
 
-## Citation
+A versioned snapshot of this repository should also be archived on Zenodo so that the manuscript can cite a DOI; see `ZENODO_GITHUB_ARCHIVE.md`.
 
-Please cite the manuscript (status: *manuscript in preparation*) and the source datasets above:
+## Citation
 
 Wang, L. *Beyond completion time: responsiveness, reliability and external consistency of tool-handle gyroscope metrics in laparoscopic peg-transfer training.* Manuscript in preparation.
 
-This code is released under the MIT License (see `LICENSE`).
+Please also cite the source datasets above.
+
+This code is released under the MIT License (see `LICENSE` in the GitHub repository).

@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 K = 5
 rng = np.random.default_rng(20261110)
 
-f = pd.read_csv("../02_数据/trial_features.csv", dtype={"session": str})
+f = pd.read_csv("trial_features.csv", dtype={"session": str})
 f = f[f.valid_trial.astype(bool)]
 idx = f.drop_duplicates(["participant", "trial"])[["participant", "trial", "order", "T_log", "dropped", "proficient"]]
 feat = f[(f.qc == "pass") & (f.w_mean >= 5.0)].groupby(["participant", "trial"])[PRIMARY].mean().reset_index()   # mean over available hands
@@ -90,8 +90,8 @@ def cindex(time, event, risk):
 
 resB["c_index_time"] = cindex(s.time.values, s.event.values, s.risk_time.values)
 resB["c_index_time_imu"] = cindex(s.time.values, s.event.values, s.risk_time_imu.values)
-json.dump([resA, resB], open("../07_results/h2_prognostic.json", "w"), indent=1)
-d.assign(p_time=PA["time"], p_imu=PA["imu"], p_time_imu=PA["time_imu"])[["participant", "trial", "order", "y", "p_time", "p_imu", "p_time_imu"]].to_csv("../07_results/h2_predictions_A.csv", index=False)
-s.to_csv("../07_results/h2_subject_level.csv", index=False)
+json.dump([resA, resB], open("results/h2_prognostic.json", "w"), indent=1)
+d.assign(p_time=PA["time"], p_imu=PA["imu"], p_time_imu=PA["time_imu"])[["participant", "trial", "order", "y", "p_time", "p_imu", "p_time_imu"]].to_csv("results/h2_predictions_A.csv", index=False)
+s.to_csv("results/h2_subject_level.csv", index=False)
 for r in (resA, resB):
     print(json.dumps({k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items()}, ensure_ascii=False))

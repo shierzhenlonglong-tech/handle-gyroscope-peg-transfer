@@ -67,7 +67,7 @@ for f in sorted(glob.glob(os.path.join(root, "*", "*kinematics.csv"))):
         rows.append(r)
 d = pd.DataFrame(rows).merge(part, on="trial_id")
 d["log_exp"] = np.log10(1 + d.procedures_lifetime)
-d.to_csv("../07_results/h3_lask_trials.csv", index=False)
+d.to_csv("results/h3_lask_trials.csv", index=False)
 print(d[["dataset", "trial_id", "procedures_lifetime", "duration_s", "w_mean", "w_p95", "qlow_5", "pause_frac", "sparc", "peaks_per_s"]].round(2).to_string())
 rng = np.random.default_rng(20261111)
 out = []
@@ -87,5 +87,5 @@ for c in ["duration_s", "w_mean", "w_p95", "qlow_5", "pause_frac", "sparc", "pea
     out.append({"metric": c, "n": len(d), "rho": rho, "p": p, "ci_lo": np.quantile(bs, 0.025), "ci_hi": np.quantile(bs, 0.975),
                 "rho_within_cohort": rw, "p_within": pw, "partial_rho_given_duration": rp, "p_partial": pp})
 o = pd.DataFrame(out)
-o.to_csv("../07_results/h3_lask_summary.csv", index=False)
+o.to_csv("results/h3_lask_summary.csv", index=False)
 print(o.round(3).to_string())

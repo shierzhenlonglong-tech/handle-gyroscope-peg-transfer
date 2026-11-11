@@ -1,4 +1,4 @@
-"""H1 稳健性分析（冻结方案第 5 节 1–6 项）+ 逐人 OLS 斜率。输出 07_results/h1_robustness.csv、h1_ols_slopes.csv。"""
+"""H1 稳健性分析（冻结方案第 5 节 1–6 项）+ 逐人 OLS 斜率。输出 results/h1_robustness.csv、h1_ols_slopes.csv。"""
 import warnings
 import numpy as np, pandas as pd
 import statsmodels.formula.api as smf
@@ -44,7 +44,7 @@ _raw = load()                      # without deviation D1
 _h.MIN_W_MEAN = 5.0
 variants["without_D1_exclusion"] = (_raw.assign(lT_mean=0, lT_within=0), "lT + drop", None)
 for tag, lab in (("_n0165", "noise_0.165"), ("_n05", "noise_0.5")):
-    variants[lab] = (load(f"../02_数据/trial_features{tag}.csv"), "lT + drop", None)
+    variants[lab] = (load(f"trial_features{tag}.csv"), "lT + drop", None)
 rows = []
 for name, (d, extra, _) in variants.items():
     for hand in "LR":
@@ -68,7 +68,7 @@ for hand in "LR":
         rows.append({"variant": "leave_one_out_min", "hand": hand, "feature": feat, "beta_std": bmin[0], "note": bmin[1]})
         rows.append({"variant": "leave_one_out_max", "hand": hand, "feature": feat, "beta_std": bmax[0], "note": bmax[1]})
 r = pd.DataFrame(rows)
-r.to_csv("../07_results/h1_robustness.csv", index=False)
+r.to_csv("results/h1_robustness.csv", index=False)
 pd.set_option("display.width", 250)
 print(r.pivot_table(index=["feature", "hand"], columns="variant", values="beta_std").round(3).to_string())
 print(r[(r.p > 0.05)][["variant", "hand", "feature", "beta_std", "p"]].round(3).to_string())
@@ -86,5 +86,5 @@ for hand in "LR":
             b2 = smf.ols("y ~ lo + lT", g).fit().params["lo"]
             rows.append({"hand": hand, "feature": feat, "participant": pid, "n": len(g), "slope_M1": b1, "slope_M2": b2})
 s = pd.DataFrame(rows)
-s.to_csv("../07_results/h1_ols_slopes.csv", index=False)
+s.to_csv("results/h1_ols_slopes.csv", index=False)
 print(s.groupby(["feature", "hand"]).agg(n=("participant", "size"), pos_M1=("slope_M1", lambda x: (x > 0).sum()), pos_M2=("slope_M2", lambda x: (x > 0).sum()), med_M2=("slope_M2", "median")).round(3).to_string())

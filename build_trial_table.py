@@ -1,10 +1,10 @@
 """合并三个分包的特征，建立试次索引与排除标记。输出：
-02_数据/trial_index.csv（每试次一行）、02_数据/trial_features.csv（每手-试次一行，含索引列）。"""
+trial_index.csv（每试次一行）、trial_features.csv（每手-试次一行，含索引列）。"""
 import re
 import sys
 import numpy as np, pandas as pd
 TAG = sys.argv[1] if len(sys.argv) > 1 else ""   # "" = baseline; e.g. "_n0165" for a noise-injected run
-d = pd.concat([pd.read_csv(f"02_数据/features{TAG}_part{i}.csv", dtype={"session": str, "ts": str}) for i in (1, 2, 3)], ignore_index=True)
+d = pd.concat([pd.read_csv(f"features{TAG}_part{i}.csv", dtype={"session": str, "ts": str}) for i in (1, 2, 3)], ignore_index=True)
 t = d.drop_duplicates(["participant", "session", "trial"])[["participant", "session", "trial", "ts", "block", "trial_no", "T_log", "dropped", "comments"]].copy()
 t = t.sort_values(["participant", "ts"]).reset_index(drop=True)
 t["comments"] = t.comments.fillna("")
@@ -26,9 +26,9 @@ v["cum_proficient"] = v.groupby("participant").proficient.cumsum()
 v["reached_criterion"] = v.cum_proficient >= 10
 t = t.merge(v[["participant", "trial", "order", "session_idx", "order_in_session", "cum_practice_s", "proficient", "cum_proficient", "reached_criterion"]], on=["participant", "trial"], how="left")
 if not TAG:
-    t.to_csv("02_数据/trial_index.csv", index=False)
+    t.to_csv("trial_index.csv", index=False)
 f = d.drop(columns=["ts", "block", "trial_no", "T_log", "dropped", "comments"]).merge(t, on=["participant", "session", "trial"])
-f.to_csv(f"02_数据/trial_features{TAG}.csv", index=False)
+f.to_csv(f"trial_features{TAG}.csv", index=False)
 print("trial keys", len(t), "| valid", int(t.valid_trial.sum()))
 print(t[["ex_calibration", "ex_no_log", "ex_short", "ex_comment", "flag_dup_id"]].sum().to_dict())
 ok = f[f.valid_trial & (f.qc == "pass")]

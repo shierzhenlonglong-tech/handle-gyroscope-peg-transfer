@@ -1,4 +1,4 @@
-"""主文图 2–6（v2）与补充图。输出 ../04_figures/v2/*.pdf 与 300 dpi *.png。"""
+"""主文图 2–6（v2）与补充图。输出 figures/*.pdf 与 300 dpi *.png。"""
 import os, sys, math, zipfile, glob
 import numpy as np, pandas as pd
 import matplotlib
@@ -18,7 +18,7 @@ HC = {"L": BLUE, "R": ORANGE}
 HN = {"L": "Left handle", "R": "Right handle"}
 LAB = {"logT": "Completion time (log)", "w_mean": "Mean angular speed", "w_p95": "P95 angular speed", "qlow_5": "Low-speed fraction",
        "pause_frac": "Pause-time fraction", "sparc": "SPARC", "peaks_per_s": "Speed-peak rate"}
-OUT = "../04_figures/v2/"
+OUT = "figures/"
 os.makedirs(OUT, exist_ok=True)
 FS = 1 / 0.032
 
@@ -39,7 +39,7 @@ def grid(ax, axis="both"):
 
 
 df = load()
-idx = pd.read_csv("../02_数据/trial_index.csv")
+idx = pd.read_csv("trial_index.csv")
 idx = idx[idx.valid_trial.astype(bool)]
 pids = sorted(df.participant.unique())
 
@@ -109,9 +109,9 @@ for a in (axb, axc):
 save(fig, "fig2_signals_and_curves")
 
 # ---------------------------------------------------------------- Fig 3: dumbbell M1 -> M2 with SRM
-res = pd.read_csv("../07_results/h1_primary.csv")
-srm = pd.read_csv("../07_results/h1_srm.csv")
-ols = pd.read_csv("../07_results/h1_ols_slopes.csv")
+res = pd.read_csv("results/h1_primary.csv")
+srm = pd.read_csv("results/h1_srm.csv")
+ols = pd.read_csv("results/h1_ols_slopes.csv")
 fig, ax = plt.subplots(figsize=(7.2, 3.0))
 ys, labels = [], []
 for i, feat in enumerate(PRIMARY):
@@ -165,7 +165,7 @@ fig.tight_layout(w_pad=0.4)
 save(fig, "fig4_participant_slopes")
 
 # ---------------------------------------------------------------- Fig 5: measurement properties
-rel = pd.read_csv("../07_results/x1_reliability.csv")
+rel = pd.read_csv("results/x1_reliability.csv")
 order = ["logT"] + PRIMARY
 fig, axes = plt.subplots(1, 2, figsize=(7.2, 2.5), sharey=True)
 for ax, col, xl, ref, reft in ((axes[0], "ICC1", "Single-trial reliability, ICC(1)", 0.8, "0.8"),
@@ -190,8 +190,8 @@ fig.tight_layout(w_pad=1.5)
 save(fig, "fig5_measurement_properties")
 
 # ---------------------------------------------------------------- Fig 6: LASK external cohort
-lk = pd.read_csv("../07_results/h3_lask_trials.csv")
-ls = pd.read_csv("../07_results/h3_lask_summary.csv").set_index("metric")
+lk = pd.read_csv("results/h3_lask_trials.csv")
+ls = pd.read_csv("results/h3_lask_summary.csv").set_index("metric")
 CO = {"DatasetA_7DOF_train": (BLUE, "o", "Cohort A (n = 19)"), "DatasetB_BAPES_val": (ORANGE, "s", "Cohort B (n = 10)"),
       "DatasetC_6DOF_test": (GREEN, "^", "Cohort C (n = 8)")}
 fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.5), gridspec_kw={"width_ratios": [1, 1, 1.15]})

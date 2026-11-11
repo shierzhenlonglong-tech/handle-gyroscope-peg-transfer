@@ -40,7 +40,7 @@ for hand in "LR":
         rows.append({"hand": hand, "feature": f, "n_subj": len(res), "ICC1": icc, "SEM": sem, "MDC95_single": mdc,
                      "mean_abs_gain": gain, "gain_over_MDC": gain / mdc, "k_for_ICC0.8": k80, "k_gain_eq_MDC": k_mdc})
 rel = pd.DataFrame(rows)
-rel.to_csv("../07_results/x1_reliability.csv", index=False)
+rel.to_csv("results/x1_reliability.csv", index=False)
 print(rel.round(3).to_string())
 
 # ---------- (2) offline (between-session) vs online (within-session) change ----------
@@ -69,7 +69,7 @@ for hand in "LR":
                      "n_on": len(b), "online_mean": b.mean(), "online_p": stats.wilcoxon(b)[1],
                      "offline_frac_same_sign_as_online": float(np.mean(np.sign(a) == np.sign(b.mean())))})
 ret = pd.DataFrame(rows)
-ret.to_csv("../07_results/x2_offline_online.csv", index=False)
+ret.to_csv("results/x2_offline_online.csv", index=False)
 print(ret.round(3).to_string())
 
 # ---------- (3) second-half slopes ----------
@@ -90,5 +90,5 @@ for hand in "LR":
         rows.append({"hand": hand, "feature": f, "n": len(s2), "slope_first_half": np.median(s1), "slope_second_half": np.median(s2),
                      "p_second_half": stats.wilcoxon(s2)[1], "n_same_sign_second": int(np.sum(np.sign(s2) == np.sign(np.median(s1))))})
 lat = pd.DataFrame(rows)
-lat.to_csv("../07_results/x3_second_half.csv", index=False)
+lat.to_csv("results/x3_second_half.csv", index=False)
 print(lat.round(3).to_string())

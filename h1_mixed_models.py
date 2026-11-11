@@ -1,4 +1,4 @@
-"""H1 主分析（冻结方案第 5 节）。输出到 07_results/。"""
+"""H1 主分析（冻结方案第 5 节）。输出到 results/。"""
 import warnings, json
 import numpy as np, pandas as pd
 import statsmodels.formula.api as smf
@@ -9,7 +9,7 @@ PRIMARY = ["w_mean", "w_p95", "qlow_5", "pause_frac", "sparc", "peaks_per_s"]
 SECONDARY = ["w_cv", "pause_rate", "qlow_2", "qlow_10", "ldlj", "acc_mag_sd", "bi_corr", "bi_both_move", "bi_left_share"]
 
 
-def load(path="../02_数据/trial_features.csv"):
+def load(path="trial_features.csv"):
     f = pd.read_csv(path, dtype={"session": str})
     f = f[f.valid_trial.astype(bool) & (f.qc == "pass")].copy()
     # 偏离记录 D1（2026-11-10）：平均角速度 < 5 deg/s 的手-试次判为传感器未随手柄运动（实际只命中 P26 右手第 2 会话的 30 个）
@@ -67,8 +67,8 @@ def run(df, feats, tag):
     for mod in ("M1", "M2"):
         k = res.model == mod
         res.loc[k, "p_fdr"] = multipletests(res.loc[k, "p"], method="fdr_bh")[1]
-    res.to_csv(f"../07_results/h1_{tag}.csv", index=False)
-    json.dump(slopes_all, open(f"../07_results/h1_{tag}_slopes.json", "w"))
+    res.to_csv(f"results/h1_{tag}.csv", index=False)
+    json.dump(slopes_all, open(f"results/h1_{tag}_slopes.json", "w"))
     return res
 
 
@@ -86,7 +86,7 @@ def srm(df):
             rows.append({"hand": hand, "feature": feat, "n_subj": len(diffs), "mean_change": diffs.mean(),
                          "sd_change": diffs.std(ddof=1), "SRM": diffs.mean() / diffs.std(ddof=1)})
     out = pd.DataFrame(rows)
-    out.to_csv("../07_results/h1_srm.csv", index=False)
+    out.to_csv("results/h1_srm.csv", index=False)
     return out
 
 

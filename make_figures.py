@@ -1,4 +1,4 @@
-"""论文图 2–7。输出 ../04_figures/*.pdf 与 300 dpi *.png。"""
+"""论文图 2–7。输出 figures/*.pdf 与 300 dpi *.png。"""
 import json
 import numpy as np, pandas as pd
 import matplotlib
@@ -15,7 +15,9 @@ HC = {"L": BLUE, "R": ORANGE}
 HN = {"L": "Left handle", "R": "Right handle"}
 LAB = {"w_mean": "Mean angular speed", "w_p95": "95th-pct. angular speed", "qlow_5": "Low-speed fraction (<5 °/s)",
        "pause_frac": "Pause-time fraction", "sparc": "SPARC smoothness", "peaks_per_s": "Speed-peak rate"}
-OUT = "../04_figures/"
+OUT = "figures/"
+import os
+os.makedirs(OUT, exist_ok=True)
 
 
 def save(fig, name):
@@ -26,7 +28,7 @@ def save(fig, name):
 
 df = load()
 pids = sorted(df.participant.unique())
-idx = pd.read_csv("../02_数据/trial_index.csv")
+idx = pd.read_csv("trial_index.csv")
 idx = idx[idx.valid_trial.astype(bool)]
 
 
@@ -73,7 +75,7 @@ grid("T_log", "Completion time (s, log scale)", "fig2_learning_curves_time", log
 grid("w_mean", "Mean angular speed (°/s)", "fig3_learning_curves_speed")
 
 # Fig 4: forest of standardized fixed effects
-res = pd.read_csv("../07_results/h1_primary.csv")
+res = pd.read_csv("results/h1_primary.csv")
 fig, axes = plt.subplots(1, 2, figsize=(7.2, 2.9), sharey=True)
 for ax, mod, ttl in zip(axes, ("M1", "M2"), ("(a) M1: practice only", "(b) M2: adjusted for completion time and drops")):
     for i, feat in enumerate(PRIMARY):
@@ -97,7 +99,7 @@ fig.tight_layout(rect=(0, 0, 1, 0.95))
 save(fig, "fig4_forest_fixed_effects")
 
 # Fig 5: per-participant OLS slopes (adjusted)
-s = pd.read_csv("../07_results/h1_ols_slopes.csv")
+s = pd.read_csv("results/h1_ols_slopes.csv")
 fig, axes = plt.subplots(1, 6, figsize=(7.2, 2.5), sharey=True)
 rng = np.random.default_rng(1)
 for ax, feat in zip(axes, PRIMARY):
@@ -124,7 +126,7 @@ fig.tight_layout(w_pad=0.4)
 save(fig, "fig5_participant_slopes")
 
 # Fig 6: robustness
-r = pd.read_csv("../07_results/h1_robustness.csv")
+r = pd.read_csv("results/h1_robustness.csv")
 order = ["main", "without_D1_exclusion", "spline_time", "within_between_time", "both_hands_only", "no_duplicate_ids", "no_drops", "noise_0.165", "noise_0.5",
          "leave_one_out_min", "leave_one_out_max"]
 names = ["Main model", "Without sensor-fault rule", "Spline for time", "Within/between time", "Both handles valid", "No repeated trial IDs", "No dropped objects",
@@ -155,7 +157,7 @@ fig.tight_layout(w_pad=0.3, rect=(0, 0.03, 1, 0.95))
 save(fig, "fig6_robustness")
 
 # Fig 7: prognostic comparison
-h2 = json.load(open("../07_results/h2_prognostic.json"))
+h2 = json.load(open("results/h2_prognostic.json"))
 fig, axes = plt.subplots(1, 2, figsize=(3.5, 2.3))
 mods = [("time", "Time only"), ("imu", "IMU only"), ("time_imu", "Time + IMU")]
 for ax, key, yl in zip(axes, ("auc", "brier"), ("LOSO AUC", "LOSO Brier score")):

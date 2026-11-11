@@ -40,7 +40,7 @@ Folder layouts handled: session archives, or extracted folders named 'PXX_FLS Ta
 are the same session); baseline files are named '..._Trial0_IMU.txt' or '..._Trial0-0_IMU.txt'.
 
 Usage
-    python oh2026_qc_sensitivity.py run --root "F:/数据/SPD-FLS1_v2/解压文件" --out "D:/.../oh2026_out" [--jobs 4]
+    python oh2026_qc_sensitivity.py run --root /path/to/SPD-FLS1 --out ./oh2026_out [--jobs 4]
     python oh2026_qc_sensitivity.py selftest          # SYNTHETIC fixture in the documented format
 Options: --fc 2 3 5 8 12 15  --sigma 0 0.1 0.25 0.5 1 2  --thresholds 2 5 10 20  --max-trials N  --no-plots
          --gyro-unit rad|deg (default rad for SPD-FLS1 v2)
