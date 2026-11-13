@@ -2,9 +2,9 @@
 
 Analysis code and derived trial-level tables for:
 
-> Liang Wang. *Beyond completion time: responsiveness, reliability and external consistency of tool-handle gyroscope metrics in laparoscopic peg-transfer training.* Manuscript in preparation.
+> Liang Wang. *Beyond completion time: responsiveness, reliability and external consistency of handle and wrist gyroscope metrics in laparoscopic peg-transfer training.* Manuscript in preparation.
 
-The study examines whether angular-velocity features from tool-handle gyroscopes in laparoscopic peg-transfer practice change with training (responsiveness), remain informative after controlling for completion time, show usable reliability, and are externally consistent with an independent instrument-tracking cohort.
+The study examines whether angular-velocity features from tool-handle gyroscopes (and, in the supplementary analyses, wrist-worn gyroscopes) in laparoscopic peg-transfer practice change with training (responsiveness), remain informative after controlling for completion time, show usable reliability, and are externally consistent with an independent instrument-tracking cohort.
 
 This repository does **not** contain raw motion recordings, official public-dataset archives, ethics paperwork, or consent forms.
 
@@ -126,7 +126,7 @@ Versioned snapshots of this repository are archived on Zenodo. All versions: [ht
 
 ## Citation
 
-Wang, L. *Beyond completion time: responsiveness, reliability and external consistency of tool-handle gyroscope metrics in laparoscopic peg-transfer training.* Manuscript in preparation.
+Wang, L. *Beyond completion time: responsiveness, reliability and external consistency of handle and wrist gyroscope metrics in laparoscopic peg-transfer training.* Manuscript in preparation.
 
 Please also cite the source datasets above.
 
